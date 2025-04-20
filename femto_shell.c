@@ -2,15 +2,17 @@
 #include<stdlib.h>
 #include<string.h>
 
-#define buf_size 10000
-int main(){
+#define buf_size 20000
+int femtoshell_main(int argc, char *argv[]) {
+    int status = 0;
     char buf[buf_size];
-    printf("$ ./myFemtoShell\n");
+    //printf("FemtoShell\n");
     while(1){
-        printf("Femto shell > ");
+        printf("Femtoshell > ");
         if(fgets(buf,buf_size,stdin) != 0){
             if(strcmp(buf,"exit\n")==0){
-                printf("Good bye\n");
+                printf("Good Bye\n");
+                exit(status);
                 break;
             }
             else if(strncmp(buf,"echo ",5)==0){
@@ -20,12 +22,16 @@ int main(){
 
             }
             else{
-                printf("invalid command\n");
+                
+                printf("Invalid command\n");
+                status = 1 ;
             }
         }
         else{
-            printf("error while reading\n");
+            exit(status);
+            break;
         }
     }
     return 0;
+
 }
