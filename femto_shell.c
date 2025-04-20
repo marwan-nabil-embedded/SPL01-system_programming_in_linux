@@ -3,7 +3,7 @@
 #include<string.h>
 
 #define buf_size 20000
-int femtoshell_main(int argc, char *argv[]) {
+int main(int argc, char *argv[]) {
     int status = 0;
     char buf[buf_size];
     //printf("FemtoShell\n");
