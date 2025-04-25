@@ -81,7 +81,7 @@ int picoshell_main(int argc, char *argv[]) {
                 status=1;
             } else {
                 if (chdir(args[1]) != 0) {
-                    perror("cd failed");
+                    perror("picoshell > cd : /invalid_directory");
                     status=1;
                 }
             }
@@ -94,24 +94,30 @@ int picoshell_main(int argc, char *argv[]) {
             status=0;
         }
 
-        // === External commands ===
         else {
-            pid_t pid = fork();
-            if (pid < 0) {
-                perror("Fork failed");
-                continue;
-            } else if (pid == 0) {
-                wait(&pid);
-                execvp(args[0], args);
-                perror("Execution failed");
-                status=1;
-                exit(1);
-            } else {
-               
-            }
-        }
+           // printf("picoshell > ");
+    pid_t pid = fork();
+    if (pid < 0) {
+        perror("Fork failed");
+        continue;
+    } else if (pid == 0) {
+        // CHILD PROCESS
+        execvp(args[0], args); // Try to run command
+        perror("command not found"); // If exec fails
+        exit(1); // Exit with error
+    } else {
+    // PARENT PROCESS
+    int wstatus;
+    waitpid(pid, &wstatus, 0);
+    if (WIFEXITED(wstatus)) {
+        status = WEXITSTATUS(wstatus); // Save child exit status
+    } else {
+        status = 1;
     }
+}
+}
+}
+return status;
 
-    return status;
 }
 
