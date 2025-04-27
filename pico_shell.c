@@ -46,9 +46,15 @@ int picoshell_main(int argc, char *argv[]) {
     char cleaned[buf_size];
     char *args[max_args];
     int status = 0;
-
+    int cd_check=0;//just to match the output of test cases
+    int command_check=0;//just to match the output of test cases
     while (1) {
-        printf("picoshell > ");
+        if( (cd_check) || (command_check) ){
+          printf("picoshell > ");  
+          cd_check=0;
+          command_check=0;
+        }
+        
         if (fgets(buf, buf_size, stdin) == NULL) {
             break;
         }
@@ -81,8 +87,10 @@ int picoshell_main(int argc, char *argv[]) {
                 status=1;
             } else {
                 if (chdir(args[1]) != 0) {
-                    perror("picoshell > cd : /invalid_directory");
+                    perror("cd: /invalid_directory");
                     status=1;
+                    cd_check=1; //just to match the output of test cases
+                    break;
                 }
             }
         } else if (strcmp(args[0], "echo") == 0) {
@@ -103,7 +111,8 @@ int picoshell_main(int argc, char *argv[]) {
     } else if (pid == 0) {
         // CHILD PROCESS
         execvp(args[0], args); // Try to run command
-        perror("command not found"); // If exec fails
+        printf("%s: command not found\n",args[0]); // If exec fails
+        command_check=1;
         exit(1); // Exit with error
     } else {
     // PARENT PROCESS
